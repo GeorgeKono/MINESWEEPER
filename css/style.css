@@ -1,0 +1,26 @@
+body {
+    text-align: center;
+}
+
+table {
+    border: 1px, solid;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cell {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    font-weight: bold;
+    font-family: monospace;
+    font-size: large;
+    box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
+    cursor: pointer;
+    background-color: gainsboro;
+}
+
+img {
+    width: 100%;
+    vertical-align: middle;
+}
