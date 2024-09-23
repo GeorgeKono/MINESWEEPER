@@ -87,45 +87,87 @@ function setMinesNegsCount(board) {
 function onCellClicked(elCell, i, j) {
     const currCell = gBoard[i][j]
 
+    if (currCell.isShown || currCell.isMarked) return
+
     if (currCell.isMine) {
         currCell.isShown = true
-        // gameOver()
-        console.log('Game over!')
+        gameOver()
         
-        elCell.style.cursor = "default"
-        elCell.style.backgroundColor = "rgba(235, 120, 120, 0.339)"
+        elCell.style.cursor = 'default'
+        elCell.style.backgroundColor = 'lightcoral'
         elCell.innerHTML = MINE_IMG
     }
     
     else if (currCell.minesAroundCount) {
         currCell.isShown = true
         gGame.shownCount++
+        checkGameOver()
         
-        elCell.style.cursor = "default"
-        elCell.style.backgroundColor = "white"
+        elCell.style.cursor = 'default'
+        elCell.style.backgroundColor = 'white'
         elCell.innerHTML = currCell.minesAroundCount
     }
 
     else if (currCell.minesAroundCount === 0) {
-        console.log('expand!')
         expandShown(gBoard, elCell, i, j)
     }
 }
 
 function expandShown(board, elCell, i, j) {
-    
+    const currRowIdx = i
+    const currColIdx = j
+    for (var i = currRowIdx - 1; i <= currRowIdx + 1; i++) {
+        if (i < 0 || i >= board.length) continue
+        for (var j = currColIdx - 1; j <= currColIdx + 1; j++) {
+            if (j < 0 || j >= board[i].length) continue
+            
+            var currCell = board[i][j]
+
+            if (currCell.isShown || currCell.isMarked) continue
+            currCell.isShown = true
+            gGame.shownCount++
+            
+            var elCurrCell = document.querySelector(`.cell-${i}-${j}`)
+            elCurrCell.style.cursor = 'default'
+            elCurrCell.style.backgroundColor = 'white'
+            
+            if (!currCell.minesAroundCount) continue
+            elCurrCell.innerHTML = currCell.minesAroundCount
+        }                
+    } 
 }
 
 function onCellMarked(elCell, i, j) {
     const currCell = gBoard[i][j]
-    currCell.isMarked = true
 
+    if (currCell.isShown) return
+    
+    if (currCell.isMarked) {
+        currCell.isMarked = false
+        gGame.markedCount--
+        checkGameOver()
+
+        elCell.style.cursor = 'pointer'
+        elCell.innerHTML = ''
+        return
+    }
+
+    currCell.isMarked = true
+    gGame.markedCount++
+    checkGameOver()
+
+    elCell.style.cursor = 'default'
     elCell.innerHTML = FLAG_IMG
 }
 
 function checkGameOver() {
-    const boardSize = gLevel.SIZE * gLevel.SIZE 
-    if (gGame.shownCount + gGame.markedCount === boardSize) {
-        GameOver()
-    }
+    const boardSize = Math.pow(gLevel.SIZE, 2) 
+    if (gGame.shownCount + gGame.markedCount != boardSize) return
+    
+    gameOver()
+}
+
+function gameOver() {
+    gGame.isOn = false
+    console.log('Game over!')
 }
