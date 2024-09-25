@@ -1,4 +1,7 @@
 body {
+    background-image: url('/img/background.png');
+    background-repeat: no-repeat;
+    background-size: 100%;
     text-align: center;
 }
 
@@ -7,6 +10,8 @@ table {
     margin-left: auto;
     margin-right: auto;
 }
+
+
 
 .cell {
     width: 40px;
@@ -20,7 +25,17 @@ table {
     background-color: gainsboro;
 }
 
-img {
+.cell img {
     width: 100%;
     vertical-align: middle;
+}
+
+.mine {
+    cursor: default;
+    background-color: lightcoral;
+}
+
+.shown {
+    cursor: default;
+    background-color: white;
 }

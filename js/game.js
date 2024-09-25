@@ -20,13 +20,12 @@ var gBoard
 function onInit() {
     gBoard = buildBoard()
     renderBoard(gBoard)
+    gGame.shownCount = 0
 }
 
 function buildBoard() {
     const size = gLevel.SIZE
-    const mines = gLevel.MINES
     var board = []
-    var placedMines = 0
 
     for (var i = 0; i < size; i++) {
         board.push([])
@@ -40,19 +39,6 @@ function buildBoard() {
             }            
         }
     }
-
-    while (placedMines < mines) {
-        var randomRowIdx = getRandomInt(0, board.length)
-        var randomColIdx = getRandomInt(0, board.length)
-        
-        if (!board[randomRowIdx][randomColIdx].isMine) {
-            board[randomRowIdx][randomColIdx].isMine = true
-            placedMines++
-        }
-
-    }
-
-    setMinesNegsCount(board)
 
     return board
 }
@@ -73,6 +59,23 @@ function renderBoard(board) {
     }
 }
 
+function setMines(board, firstClickedRowIdx, firstClickedColIdx) {
+    const mines = gLevel.MINES
+    var placedMines = 0
+
+    while (placedMines < mines) {
+        var randomRowIdx = getRandomInt(0, board.length)
+        var randomColIdx = getRandomInt(0, board.length)
+
+        if ((randomRowIdx != firstClickedRowIdx || randomColIdx != firstClickedColIdx)
+            && !board[randomRowIdx][randomColIdx].isMine) {
+            board[randomRowIdx][randomColIdx].isMine = true
+            placedMines++
+            console.log('Mine placed');
+        }
+    }
+}
+
 function setMinesNegsCount(board) {
     for (var i = 0; i < board.length; i++) {
         for (var j = 0; j < board[0].length; j++) {
@@ -84,8 +87,19 @@ function setMinesNegsCount(board) {
     }
 }
 
+function startGame(firstClickedRowIdx, firstClickedColIdx) {
+    gGame.isOn = true
+    setMines(gBoard, firstClickedRowIdx, firstClickedColIdx)
+    setMinesNegsCount(gBoard)
+}
+
 function onCellClicked(elCell, i, j) {
     const currCell = gBoard[i][j]
+
+    if (!gGame.shownCount) {
+        startGame(i, j)
+        console.log('Start the game!')
+    }
 
     if (currCell.isShown || currCell.isMarked) return
 
@@ -93,8 +107,7 @@ function onCellClicked(elCell, i, j) {
         currCell.isShown = true
         gameOver()
         
-        elCell.style.cursor = 'default'
-        elCell.style.backgroundColor = 'lightcoral'
+        elCell.classList.add('mine')
         elCell.innerHTML = MINE_IMG
     }
     
@@ -103,13 +116,14 @@ function onCellClicked(elCell, i, j) {
         gGame.shownCount++
         checkGameOver()
         
-        elCell.style.cursor = 'default'
-        elCell.style.backgroundColor = 'white'
+        elCell.classList.add('shown')
         elCell.innerHTML = currCell.minesAroundCount
     }
 
     else if (currCell.minesAroundCount === 0) {
         expandShown(gBoard, elCell, i, j)
+        console.log('Third case');
+        
     }
 }
 
@@ -128,8 +142,7 @@ function expandShown(board, elCell, i, j) {
             gGame.shownCount++
             
             var elCurrCell = document.querySelector(`.cell-${i}-${j}`)
-            elCurrCell.style.cursor = 'default'
-            elCurrCell.style.backgroundColor = 'white'
+            elCurrCell.classList.add('shown')
             
             if (!currCell.minesAroundCount) continue
             elCurrCell.innerHTML = currCell.minesAroundCount
@@ -140,6 +153,7 @@ function expandShown(board, elCell, i, j) {
 function onCellMarked(elCell, i, j) {
     const currCell = gBoard[i][j]
 
+    if (!gGame.isOn) return
     if (currCell.isShown) return
     
     if (currCell.isMarked) {
@@ -170,4 +184,27 @@ function checkGameOver() {
 function gameOver() {
     gGame.isOn = false
     console.log('Game over!')
+}
+
+function gameLevel(difficulty) {
+    switch (difficulty) {
+        case 'Begginer':
+            gLevel.SIZE = 4
+            gLevel.MINES = 2
+            onInit()
+            console.log('Begginer!')
+            break;
+        case 'Medium':
+            gLevel.SIZE = 8
+            gLevel.MINES = 14
+            onInit()
+            console.log('Medium!')
+            break
+        case 'Expert':
+            gLevel.SIZE = 12
+            gLevel.MINES = 32
+            onInit()
+            console.log('Expert!')
+            break
+    }
 }
