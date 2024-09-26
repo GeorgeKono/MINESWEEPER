@@ -11,7 +11,9 @@ table {
     margin-right: auto;
 }
 
-
+button {
+    cursor: pointer;
+}
 
 .cell {
     width: 40px;
@@ -28,6 +30,7 @@ table {
 .cell img {
     width: 100%;
     vertical-align: middle;
+    object-fit: contain;
 }
 
 .mine {
@@ -38,4 +41,74 @@ table {
 .shown {
     cursor: default;
     background-color: white;
+}
+
+.dif {
+    font-size: larger;
+}
+
+.game-board {
+    text-align: center;
+    font-weight: bold;
+    font-family: monospace;
+    font-size: large;
+    border: 1px, solid;
+    background-color: rgba(147, 249, 100, 0.44);
+    display: inline-block;
+    padding: 5px;
+}
+
+#keys-left {
+    display: inline-block;
+    border: solid;
+    padding: 5px
+}
+
+#smile {
+    display: inline-block;
+    border: solid;
+    padding: 5px
+}
+
+#smile img {
+    height: 60px;
+}
+
+#time {
+    display: inline-block;
+    border: solid;
+    padding: 5px
+}
+
+.lives-left {
+    height: auto;
+    max-width: fit-content;
+    margin: auto;
+    text-align: center;
+    font-weight: bold;
+    font-family: monospace;
+    font-size: large;
+    border: 2px, solid;
+    background-color: rgba(147, 249, 100, 0.44);
+    padding: 5px;
+}
+
+.live-img img{
+    height: 30px;
+    vertical-align: middle;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.caution {
+    background-color: orange;
+}
+
+.game-over {
+    background-color: orangered;
+}
+
+.space {
+    padding: 2px;
 }

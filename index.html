@@ -11,12 +11,20 @@
 <body onload="onInit()">
     <h2>MINESWEEPER George edition</h2>
     <h1>ROBBERY OF THE CENTURY</h1>
+    <h4>“Your dream has come true! Finally, you can be the greatest robber of all time! Hurry up—you need to find all the keys to the safe! Luckily, someone has left clues around the board. But be careful, one wrong step and the police could catch you!”</h4>
     <p class="game-level">
-    <div>Select your Difficulty</div>
+    <div class="dif">Select your Difficulty</div>
     <div><button onclick="gameLevel('Begginer')">Begginer</button> <button onclick="gameLevel('Medium')">Medium</button> <button onclick="gameLevel('Expert')">Expert</button></div>
     </p>
 
-    <div class="game-board">yalle</div>
+    <div class="game-board">
+        <div id="keys-left">Keys left: <span>keys left</span></div>
+        <div id="smile"><img id="smile-img" src="img/smile-normal.png" alt="smile-normal"></div>
+        <div id="time">time</div>
+    </div>
+    <div class="space"> </div>
+    <div class="lives-left">Lives left: <span class="live-img">lives left</span></div>
+    <div class="space"> </div>
     <table oncontextmenu="return false">
         <tbody class="board"></tbody>
     </table>

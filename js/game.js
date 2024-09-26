@@ -1,11 +1,13 @@
 'use strict'
 
-const MINE_IMG = '<img src="img/police4.png">'
+const MINE_IMG = '<img src="img/police.png">'
 const FLAG_IMG = '<img src="img/key.png">'
+const LIVE_IMG = '<img src="img/handcuffs.png">'
 
 const gLevel = {
     SIZE: 4,
     MINES: 2,
+    LIVES: 1,
 }
 
 const gGame = {
@@ -13,6 +15,8 @@ const gGame = {
     shownCount: 0,
     markedCount: 0,
     secsPassed: 0,
+    minesLeft: gLevel.MINES,
+    livesLeft: gLevel.LIVES,
 }
 
 var gBoard
@@ -20,7 +24,13 @@ var gBoard
 function onInit() {
     gBoard = buildBoard()
     renderBoard(gBoard)
+    minesLeft(gLevel.MINES)
+    livesLeft(gLevel.LIVES)
     gGame.shownCount = 0
+    gGame.livesLeft = gLevel.LIVES
+
+    var elLivesLeftSpan = document.querySelector('.lives-left span')
+    elLivesLeftSpan.classList.remove('caution', 'game-over')
 }
 
 function buildBoard() {
@@ -101,11 +111,14 @@ function onCellClicked(elCell, i, j) {
         console.log('Start the game!')
     }
 
+    if (!gGame.isOn) return
+
     if (currCell.isShown || currCell.isMarked) return
 
     if (currCell.isMine) {
         currCell.isShown = true
-        gameOver()
+        gGame.livesLeft--
+        livesLeft(gGame.livesLeft)
         
         elCell.classList.add('mine')
         elCell.innerHTML = MINE_IMG
@@ -122,8 +135,7 @@ function onCellClicked(elCell, i, j) {
 
     else if (currCell.minesAroundCount === 0) {
         expandShown(gBoard, elCell, i, j)
-        console.log('Third case');
-        
+        console.log('Third case');   
     }
 }
 
@@ -155,10 +167,12 @@ function onCellMarked(elCell, i, j) {
 
     if (!gGame.isOn) return
     if (currCell.isShown) return
-    
+
     if (currCell.isMarked) {
         currCell.isMarked = false
         gGame.markedCount--
+        gGame.minesLeft++
+        minesLeft()
         checkGameOver()
 
         elCell.style.cursor = 'pointer'
@@ -168,10 +182,67 @@ function onCellMarked(elCell, i, j) {
 
     currCell.isMarked = true
     gGame.markedCount++
+    
+    if (gGame.minesLeft <= 0) return
+    gGame.minesLeft--
+    minesLeft()
     checkGameOver()
 
     elCell.style.cursor = 'default'
     elCell.innerHTML = FLAG_IMG
+}
+
+function gameLevel(difficulty) {
+    switch (difficulty) {
+        case 'Begginer':
+            gLevel.SIZE = 4
+            gLevel.MINES = 2
+            gLevel.LIVES = 1
+            onInit()
+            console.log('Begginer!')
+            break;
+        case 'Medium':
+            gLevel.SIZE = 8
+            gLevel.MINES = 14
+            gLevel.LIVES = 2
+            onInit()
+            console.log('Medium!')
+            break
+        case 'Expert':
+            gLevel.SIZE = 12
+            gLevel.MINES = 32
+            gLevel.LIVES = 3
+            onInit()
+            console.log('Expert!')
+            break
+    }
+}
+
+function minesLeft(mines) {
+    const elMinesLeftSpan = document.querySelector('#keys-left span')
+    elMinesLeftSpan.innerHTML = mines
+}
+
+function livesLeft(lives) {
+    var elLivesLeftSpan = document.querySelector('.lives-left span')
+    elLivesLeftSpan.innerHTML = ''
+
+    if (lives > 0) {
+        for (var i = 0; i < lives; i++) {
+            elLivesLeftSpan.innerHTML += LIVE_IMG
+        }
+    }
+
+    else if (lives === 0) {
+        elLivesLeftSpan.innerHTML = 'one last chance! be careful!'
+        elLivesLeftSpan.classList.add('caution')
+    }
+
+    else if (lives < 0) {
+        elLivesLeftSpan.innerHTML = 'sorry bro, see you in jail :('
+        elLivesLeftSpan.classList.add('game-over')
+        gameOver()
+    }
 }
 
 function checkGameOver() {
@@ -184,27 +255,10 @@ function checkGameOver() {
 function gameOver() {
     gGame.isOn = false
     console.log('Game over!')
-}
 
-function gameLevel(difficulty) {
-    switch (difficulty) {
-        case 'Begginer':
-            gLevel.SIZE = 4
-            gLevel.MINES = 2
-            onInit()
-            console.log('Begginer!')
-            break;
-        case 'Medium':
-            gLevel.SIZE = 8
-            gLevel.MINES = 14
-            onInit()
-            console.log('Medium!')
-            break
-        case 'Expert':
-            gLevel.SIZE = 12
-            gLevel.MINES = 32
-            onInit()
-            console.log('Expert!')
-            break
-    }
+    var elSmileImg = document.getElementById('smile-img')
+    elSmileImg.src = 'img/smile-lose.png'
+
+    var elSmileDiv = document.getElementById('smile')
+    elSmileDiv.style.backgroundColor = 'orangered'
 }
